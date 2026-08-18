@@ -166,3 +166,179 @@ add(5)(10)
 A → B → C
 
 Interview-এ এগুলোর উত্তর দেওয়ার সময় প্রথমে ২–৩ লাইনে মূল concept বলবে, তারপর ছোট example দেবে। এতে interviewer বুঝবে তুমি শুধু definition মুখস্থ করোনি, concept-টাও বুঝেছ।
+
+
+
+### Explain prototype chaining.
+
+- **answer**:Prototype chaining হলো JavaScript-এর এমন একটি mechanism যেখানে কোনো object-এর মধ্যে কোনো property বা method না পাওয়া গেলে JavaScript তার prototype-এর মধ্যে সেটি খুঁজে দেখে। সেখানেও না পেলে prototype-এর prototype-এ খুঁজতে থাকে। এইভাবে উপরের দিকে খুঁজতে খুঁজতে property পাওয়া গেলে সেটি ব্যবহার করে, আর কোথাও না পাওয়া গেলে undefined return করে।
+
+### Difference between Object.create() and class-based inheritance.
+
+- **answer**: Object.create() সরাসরি একটি existing object-কে prototype হিসেবে ব্যবহার করে নতুন object তৈরি করে। অন্যদিকে class-based inheritance-এ আমরা class এবং extends ব্যবহার করে একটি class থেকে আরেকটি class inherit করি। Object.create() বেশি prototype-based এবং direct, আর class syntax inheritance-কে আরও structured এবং readable way-তে লিখতে সাহায্য করে।
+
+### How does JavaScript handle property lookup?
+
+- **answer**: JavaScript প্রথমে object-এর নিজের properties-এর মধ্যে property খুঁজে দেখে। যদি সেখানে property না পাওয়া যায়, তাহলে object-এর prototype-এ search করে। সেখানেও না পাওয়া গেলে prototype chain-এর পরবর্তী object-এ search করে। এই process চলতে থাকে যতক্ষণ property পাওয়া যায় অথবা prototype chain শেষ হয়ে যায়।
+
+### What is the difference between shallow copy and deep copy?
+
+- **answer**: Shallow copy একটি object-এর top-level properties copy করে, কিন্তু nested object বা array-এর reference একই থাকে। অন্যদিকে deep copy nested objects এবং arrays-সহ সম্পূর্ণ আলাদা copy তৈরি করে। তাই deep copy করার পরে original object-এর nested data পরিবর্তন করলে copied object সাধারণত পরিবর্তিত হয় না।
+
+### How does Object.freeze() differ from Object.seal()?
+
+ Object.freeze() object-কে অনেক বেশি restrictive করে। এটি object-এর existing properties পরিবর্তন, নতুন property যোগ এবং existing property delete করা—সবকিছু prevent করে। অন্যদিকে Object.seal() নতুন property যোগ এবং existing property delete করা prevent করে, কিন্তু existing property-এর value পরিবর্তন করা যায়।
+
+### Explain Callback Hell and Modern Solutions.
+
+- **answer**: Callback Hell হলো যখন একাধিক asynchronous operation একে অপরের ওপর নির্ভর করে এবং callback-এর ভিতরে callback nested হতে হতে code অনেক বেশি complex হয়ে যায়। এতে code বুঝতে, debug করতে এবং maintain করতে সমস্যা হয়। Modern JavaScript-এ Promises এবং async/await ব্যবহার করে callback hell অনেক সহজভাবে avoid করা যায়।
+
+Callback Hell Example:
+getUser(userId, function(user) {
+
+
+    getOrders(user.id, function(orders) {
+
+
+        getPayment(orders[0].id, function(payment) {
+
+
+            sendEmail(payment, function(result) {
+
+
+                console.log(result);
+
+
+            });
+
+
+        });
+
+
+    });
+
+
+});
+
+দেখো:
+
+callback
+   ↓
+  callback
+     ↓
+    callback
+       ↓
+      callback
+
+এজন্য এটাকে অনেক সময়:
+
+Pyramid of Doom
+
+বলা হয়।
+
+Modern Solution 1 — Promises
+getUser(userId)
+    .then(user => getOrders(user.id))
+    .then(orders => getPayment(orders[0].id))
+    .then(payment => sendEmail(payment))
+    .then(result => console.log(result))
+    .catch(error => console.log(error));
+
+এতে nesting কমে যায়।
+
+Modern Solution 2 — Async/Await
+
+আরও readable:
+
+async function processUser(userId) {
+    try {
+        const user = await getUser(userId);
+        const orders = await getOrders(user.id);
+        const payment = await getPayment(orders[0].id);
+        const result = await sendEmail(payment);
+
+
+        console.log(result);
+    } catch (error) {
+        console.log(error);
+    }
+}
+🧠 সহজভাবে
+
+Callback Hell:
+
+Function
+  ↓
+Callback
+   ↓
+  Callback
+    ↓
+   Callback
+
+Modern:
+
+async
+  ↓
+await
+  ↓
+await
+  ↓
+await
+
+এতে code পড়া এবং maintain করা অনেক সহজ।
+
+### What causes Memory Leaks in JavaScript?
+
+- **answer**: Memory leak হলো যখন কোনো data বা object-এর আর প্রয়োজন নেই, কিন্তু JavaScript-এর কাছে সেটার reference থেকে যায়। ফলে Garbage Collector সেই memory-কে পরিষ্কার করতে পারে না এবং সময়ের সাথে memory usage বাড়তে থাকে।
+
+### 28. Difference between Debounce and Throttle
+
+এই question frontend interview-এ অনেক common।
+
+
+
+- **answer**: Debounce এবং Throttle দুটোই কোনো function কতবার execute হবে সেটা control করার technique। Debounce-এ event বারবার trigger হলেও কিছু সময় event বন্ধ থাকার পর function execute হয়। আর Throttle-এ নির্দিষ্ট সময়ের মধ্যে function সর্বোচ্চ একবার execute হতে পারে।
+
+Debounce
+
+ধরো search box:
+
+User typing:
+
+
+A
+An
+Ant
+Anto
+
+প্রতিবার API call করলে অনেক request যাবে।
+
+Debounce ব্যবহার করলে user typing বন্ধ করার কিছু সময় পর API call হবে।
+
+Typing → Typing → Typing → Stop
+                              ↓
+                           API Call
+Example:
+function debounce(fn, delay) {
+    let timer;
+
+
+    return function(...args) {
+        clearTimeout(timer);
+
+
+        timer = setTimeout(() => {
+            fn(...args);
+        }, delay);
+    };
+}
+Use Case:
+Search box
+Autocomplete
+Form validation
+Window resize
+
+### When would you use Web Workers?
+
+
+- **answer**: Web Worker ব্যবহার করি যখন কোনো heavy JavaScript কাজ main thread-এর বাইরে execute করতে হয়, যাতে browser-এর UI responsive থাকে। কারণ JavaScript-এর main thread-এ heavy computation চললে UI freeze বা slow হয়ে যেতে পারে।
