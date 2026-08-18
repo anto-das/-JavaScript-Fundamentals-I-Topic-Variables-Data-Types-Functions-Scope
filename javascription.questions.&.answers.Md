@@ -342,3 +342,118 @@ Window resize
 
 
 - **answer**: Web Worker ব্যবহার করি যখন কোনো heavy JavaScript কাজ main thread-এর বাইরে execute করতে হয়, যাতে browser-এর UI responsive থাকে। কারণ JavaScript-এর main thread-এ heavy computation চললে UI freeze বা slow হয়ে যেতে পারে।
+
+### Immutability কী এবং কেন গুরুত্বপূর্ণ?
+ 
+
+- **answer**: Immutability মানে হলো কোনো existing data বা object-কে সরাসরি পরিবর্তন না করে, পরিবর্তনের প্রয়োজন হলে নতুন data বা object তৈরি করা। এটি গুরুত্বপূর্ণ কারণ এতে data-এর পরিবর্তন সহজে track করা যায় এবং unexpected side effect কমে যায়।
+
+Example:
+
+ধরো:
+
+const user = {
+    name: "Anto",
+    age: 22
+};
+
+এভাবে সরাসরি পরিবর্তন না করে:
+
+user.age = 23;
+
+নতুন object তৈরি করতে পারি:
+
+const updatedUser = {
+    ...user,
+    age: 23
+};
+
+### Explain Event Delegation and its Benefits
+
+
+- **answer**: Event delegation হলো এমন একটি technique যেখানে অনেকগুলো child element-এ আলাদা আলাদা event listener না দিয়ে তাদের parent element-এ একটি event listener দেওয়া হয়। তারপর event bubbling ব্যবহার করে কোন child element থেকে event এসেছে সেটা নির্ধারণ করা হয়।
+
+Example:
+
+ধরো:
+
+<ul id="users">
+    <li>Anto</li>
+    <li>Rahim</li>
+    <li>Karim</li>
+</ul>
+
+প্রতিটি li-তে আলাদা event listener না দিয়ে:
+
+const users = document.getElementById("users");
+
+
+users.addEventListener("click", (event) => {
+    if (event.target.tagName === "LI") {
+        console.log(event.target.textContent);
+    }
+});
+
+এখানে শুধু ul-এ একটি listener আছে।
+
+### How does Proxy work and when would you use it?
+
+
+- **answer**: Proxy হলো JavaScript-এর একটি feature যেটা ব্যবহার করে আমরা কোনো object-এর operations যেমন property read, property update, property delete বা function call-এর behavior intercept এবং customize করতে পারি।
+
+সহজভাবে:
+
+Proxy হলো object-এর সামনে একটি layer, যেটা object-এর operation monitor বা control করতে পারে।
+
+Example
+const user = {
+    name: "Anto",
+    age: 22
+};
+
+
+const proxyUser = new Proxy(user, {
+    get(target, property) {
+        console.log(`${property} accessed`);
+        return target[property];
+    }
+});
+
+
+console.log(proxyUser.name);
+
+যখন:
+
+proxyUser.name
+
+করছি, Proxy-এর get() handler কাজ করবে।
+
+Output:
+
+name accessed
+Anto
+set() দিয়ে value change control করা যায়
+const user = {
+    age: 22
+};
+
+
+const proxyUser = new Proxy(user, {
+    set(target, property, value) {
+        if (property === "age" && value < 0) {
+            throw new Error("Age cannot be negative");
+        }
+
+
+        target[property] = value;
+        return true;
+    }
+});
+
+এখন:
+
+proxyUser.age = -5;
+
+করলে error পাওয়া যাবে।
+
+কারণ Proxy value update করার আগে সেটা check করছে।
