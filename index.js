@@ -29,7 +29,7 @@ function characterFrequencies(str) {
       counts[char] = counts[char] + 1;
     }
   }
-  
+  console.log(counts);
 }
 
 
